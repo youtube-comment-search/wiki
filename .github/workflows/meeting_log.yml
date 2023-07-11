@@ -1,0 +1,26 @@
+name: Create Meeting Log
+
+on:
+  schedule:
+    - cron: '0 1 * * SAT'
+  workflow_dispatch:
+
+jobs:
+  create_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Issue
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.ACTION_TOKEN }}
+          script: |
+            const {title, body} = require("./scripts/createMeetingLog")();
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              assignees: ['byhhh2', 'ssongjay'],
+              labels: ['회의록']
+            });
